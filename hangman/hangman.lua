@@ -1,17 +1,5 @@
 --[[
- hangman.lua
- Author: Eric Najork and David Najork
-
- Class: CSC 372: Comparative Programming Languages
- Assignment: Project #1, Part #3
- Instructor: Lester McCann
- TA: Tito Ferra and Josh Xiong
- Due: December 9th, 2019
- Description: this program implements the game of hangman
- as a World of Warcraft Addon. To open the game, use the
- slash command `/hm` or `/hangman` in the World of Warcraft
- client's chat. This addon is written to be compatible with
- WoW version 8.2.5 and Classic WoW.
+ written by topkek
 --]]
 
 local AddOn, config = ... -- import config
@@ -26,16 +14,6 @@ DEV_MODE = false -- this should be false by default
 incorrect = {}
 correct = {}
 
--- loadRoot
---
--- Purpose: obtain a reference to the root frame
--- and initialize the game
--- Pre: this is a reference to the root frame
--- Post: the forwarding of keyboard inputs to the addon 
--- is disabled
--- Return: none
--- Parameters: this (the root frame)
--- Direction: in
 function loadRoot(this)
   root = this
   root:EnableKeyboard(false)
@@ -48,18 +26,6 @@ function loadRoot(this)
   end
 end
 
--- rootEvents
---
--- Purpose: handle events connected to the root frame
--- Pre: event is a PLAYER_STARTED_MOVING, PLAYER_STOPPED_MOVING
--- or CURSOR_UPDATE event
--- Post: the opacity of the addon window is decreased when
--- the player moves and increased when they stop. Also, when
--- Escape is pressed, keyboard input no longer is forwarded
--- to the addon.
--- Return: none
--- Parameters: event
--- Direction: in
 function rootEvents(event)
   if event == "PLAYER_STARTED_MOVING" then
     root:SetAlpha(0.5)
@@ -71,28 +37,10 @@ function rootEvents(event)
   end
 end
 
--- hookConfirm
---
--- Purpose: obtain a reference to the confirm button
--- Pre: this is a reference to the confirm button defined
--- in hangman.xml
--- Post: none
--- Return: none
--- Parameters: this (the confirm button)
--- Direction: in
 function hookConfirm(this)
   confirmButton = this
 end
 
--- minimize
---
--- Purpose: hide the addon frame
--- Pre: none
--- Post: keyboard input forwarding is disabled and the
--- addon frame is hidden
--- Return: none
--- Parameters: none
--- Direction: none
 function minimize()
   if hidden then
     root:Show()
@@ -103,42 +51,16 @@ function minimize()
   root:EnableKeyboard(false)
 end
 
--- focusGame
---
--- Purpose: enable keyboard input capturing
--- Pre: none
--- Post: keyboard input is forwarded to the addon frame
--- Return: none
--- Parameters: none
--- Direction: none
 function focusGame()
   if not isOver then
     root:EnableKeyboard(true)
   end
 end
 
--- escapePressed
---
--- Purpose: disable keyboard input capturing when escape
--- is pressed
--- Pre: none
--- Post: keyboard input is not forwarded to the addon frame
--- Return: none
--- Parameters: none
--- Direction: none
 function escapePressed()
   root:EnableKeyboard(false)
 end
 
--- handleKey
---
--- Purpose: handle keyboard keydown events
--- Pre: key is the string value of the key
--- that is currently down
--- Post: the keyboard event is handled
--- Return: none
--- Parameters: key (key that is down)
--- Direction: in
 function handleKey(key)
   if key == "ESCAPE" then
     -- unfocus the addon frame 
@@ -154,15 +76,6 @@ function handleKey(key)
   end
 end
 
--- updatePreview
---
--- Purpose: update the display for user's currently
--- selected letter
--- Pre: key is the string value of the key
--- Post: the selection preview is updated
--- Return: none
--- Parameters: key (key that is down)
--- Direction: in
 function updatePreview(key)
   if isOver then
     return
@@ -176,14 +89,6 @@ function updatePreview(key)
   end
 end
 
--- refresh
---
--- Purpose: restart the game of hangman
--- Pre: none
--- Post: the game is reset
--- Return: none
--- Parameters: none
--- Direction: none
 function refresh()
   -- reset variables
   isOver = false
@@ -205,17 +110,6 @@ function refresh()
   root.endText:SetText("")
 end
 
--- obscure
---
--- Purpose: generate the string representation
--- of the obscured version of the current word.
--- ex: `DOG` becomes `- - - ` with no guesses
---     `DOG` becomes `- O - ` with "O" guessed.
--- Pre: str is the word to be obscured
--- Post: none
--- Return: the obscured version of given word
--- Parameters: str (the word being obscured)
--- Direction: both
 function obscure(str)
   -- countCorrect is used to determine the
   -- win condition (when countCorrect is
@@ -234,16 +128,6 @@ function obscure(str)
   return result
 end
 
--- unobscure
---
--- Purpose: generate the string representation
--- of the unobscured version of the current word.
--- ex: `DOG` becomes `D O G`
--- Pre: str is the word to be unobscured
--- Post: none
--- Return: the unobscured version of given word
--- Parameters: str (the word being unobscured)
--- Direction: both
 function unobscure(str)
   local result = ""
   for i = 1, #str do
@@ -252,16 +136,6 @@ function unobscure(str)
   return result
 end
 
--- correctContains
---
--- Purpose: check if a character is contained in the
--- correct guesses table
--- Pre: char is a letter
--- Post: none
--- Return: true if the character is contained in the
--- correct guess table, otherwise false
--- Parameters: char (the character to check for)
--- Direction: both
 function correctContains(char)
   for i = 1, #correct do
     if correct[i] == char then
@@ -271,16 +145,6 @@ function correctContains(char)
   return false
 end
 
--- incorrectContains
---
--- Purpose: check if a character is contained in the
--- incorrect guesses table
--- Pre: char is a letter
--- Post: none
--- Return: true if the character is contained in the
--- incorrect guess table, otherwise false
--- Parameters: char (the character to check for)
--- Direction: both
 function incorrectContains(char)
   for i = 1, #incorrect do
     if incorrect[i] == char then
@@ -290,16 +154,6 @@ function incorrectContains(char)
   return false
 end
 
--- wordContains
---
--- Purpose: check if a character is contained in the
--- word
--- Pre: char is a letter
--- Post: none
--- Return: true if the character is contained in the
--- word, otherwise false
--- Parameters: char (the character to check for)
--- Direction: both
 function wordContains(char)
   for i = 1, #word do
     if word:sub(i, i) == char then
@@ -309,17 +163,6 @@ function wordContains(char)
   return false
 end
 
--- confirm
---
--- Purpose: confirm the letter selection
--- Pre: none
--- Post: add the guess to the word or incorrect
--- guess list. Increment the number of incorrect 
--- guesses the user has made and display if the
--- user has won or lost the game.
--- Return: none
--- Parameters: none
--- Direction: none
 function confirm()
   if root.preview:GetText() ~= nil and root.preview:GetText() ~= "" then
     if wordContains(root.preview:GetText()) then
@@ -346,16 +189,6 @@ function confirm()
   end
 end
 
--- getIncorrect
---
--- Purpose: get the the string representation of the
--- list of incorrect guesses the user has made
--- Pre: none
--- Post: none
--- Return: the string representation of the list of
--- incorrect guesses the user has made
--- Parameters: none
--- Direction: out
 function getIncorrect()
   local result = ""
   for i = 1, #incorrect do
@@ -364,15 +197,6 @@ function getIncorrect()
   return result
 end
 
--- transitionEnd
---
--- Purpose: clear the screen of the current selection
--- preview and the confirm button. Also, disable all
--- keyboard input forwarding.
--- Pre: none
--- Post: clear the screen in preparation of the end
--- Return: none
--- Direction: none
 function transitionEnd()
   root.previewPrefix:Hide()
   root.preview:Hide()
@@ -380,14 +204,6 @@ function transitionEnd()
   root:EnableKeyboard(false)
 end
 
--- win
---
--- Purpose: display the winning message
--- Pre: none
--- Post: display the winning message
--- Return: none
--- Parameters: none
--- Direction: none
 function win()
   isOver = true
   transitionEnd()
@@ -395,14 +211,6 @@ function win()
   root.endText:SetTextColor(0.5, 1.0, 0.5, 1.0)
 end
 
--- lose
---
--- Purpose: display the losing message
--- Pre: none
--- Post: display the losing message
--- Return: none
--- Parameters: none
--- Direction: none
 function lose()
   isOver = true
   transitionEnd()
@@ -411,18 +219,6 @@ function lose()
   root.word:SetText(unobscure(word))
 end
 
--- slashCommand
---
--- Purpose: handle slash commands entered
--- by the user
--- Pre: msg is a string containing the text
--- that followed after the user's slash
--- command
--- Post: the slash command is handled
--- Return:none
--- Parameters: msg (the argument provided
--- to the slash command)
--- Direction: in
 function slashCommand(msg)
   if msg == "" then
     -- minimize when the argument
