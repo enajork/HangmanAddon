@@ -1,16 +1,3 @@
---[[
- words.lua
- Author: Eric Najork and David Najork
-
- Class: CSC 372: Comparative Programming Languages
- Assignment: Project #1, Part #3
- Instructor: Lester McCann
- TA: Tito Ferra and Josh Xiong
- Due: December 9th, 2019
- Description: this program stores the dictionary of 
- words used in the game of hangman.
---]]
-
 local AddOn, config = ... -- import configs
 
 -- The following list is used to
