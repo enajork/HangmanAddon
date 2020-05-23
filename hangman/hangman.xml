@@ -1,0 +1,173 @@
+<!-- 
+ hangman.xml
+ Author: Eric Najork and David Najork
+
+ Class: CSC 372: Comparative Programming Languages
+ Assignment: Project #1, Part #3
+ Instructor: Lester McCann
+ TA: Tito Ferra and Josh Xiong
+ Due: December 9th, 2019
+ Description: this XML file is used to create the UI
+ and events for the game of hangman. It also hooks up
+ XML elements and event handling to the hangman.lua file.
+ -->
+
+<!-- Boilerplate Ui Element -->
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+  <!-- Use scripts from hangman.lua -->
+  <Script file="hangman.lua"/>
+  <!-- Import the chalk font -->
+  <Font name="Chalk" font="Interface\Addons\hangman\textures\CHALK.ttf" virtual="true">
+    <FontHeight>
+      <AbsValue val="48"/>
+    </FontHeight>
+  </Font>
+  <!-- Import the small chalk font -->
+  <Font name="ChalkSmall" font="Interface\Addons\hangman\textures\CHALK.ttf" virtual="true">
+    <FontHeight>
+      <AbsValue val="24"/>
+    </FontHeight>
+  </Font>
+  <!-- Create the root addon frame -->
+  <Frame name="hangmanFrame" parent="UIParent" toplevel="true" enableMouse="true" movable="true" alpha="0.90" hidden="true">
+    <Scripts>
+      <!-- Register events and pass references of XML elements to hangman.lua using
+           the imported scripts -->
+      <OnLoad>
+        self:RegisterForDrag("LeftButton");
+        self:RegisterEvent("PLAYER_STARTED_MOVING");
+        self:RegisterEvent("PLAYER_STOPPED_MOVING");
+        self:RegisterEvent("CURSOR_UPDATE");
+        loadRoot(self);
+      </OnLoad>
+      <OnDragStart>
+        self:StartMoving();
+      </OnDragStart>
+      <OnDragStop>
+        self:StopMovingOrSizing();
+      </OnDragStop>
+      <OnKeyDown>
+        handleKey(key);
+      </OnKeyDown>
+      <OnMouseDown>
+        focusGame();
+      </OnMouseDown>
+      <OnEvent>
+        rootEvents(event);
+      </OnEvent>
+    </Scripts>
+    <Size>
+      <AbsDimension x="800" y="400" />
+    </Size>
+    <Anchors>
+      <Anchor point="CENTER" relativeTo="UIParent"/>
+    </Anchors>
+    <!-- Set background of the root frame to the blackboard texture
+         and apply the border texture -->
+    <Backdrop bgFile="Interface\Addons\hangman\textures\blackboard"
+        edgeFile="Interface\DialogFrame\UI-DialogBox-Border">
+      <EdgeSize>
+        <AbsValue val="32"/>
+      </EdgeSize>
+    </Backdrop>
+    <Layers>
+      <Layer>
+        <!-- Create text elements used in the game -->
+        <FontString inherits="ChalkSmall" parentKey="incorrect" text="INCORRECT: ">
+          <Anchors>
+            <Anchor point="TOPLEFT" relativeTo="$parent" x="250" y="-25"/>
+          </Anchors>
+          <Color r="1.0" g="0.5" b="0.5"/>
+        </FontString>
+        <FontString inherits="ChalkSmall" parentKey="guesses" text="GUESSES: 0/6">
+          <Anchors>
+            <Anchor point="TOPLEFT" relativeTo="$parent" x="25" y="-25"/>
+          </Anchors>
+          <Color r="0.5" g="1.0" b="0.5"/>
+        </FontString>
+        <FontString inherits="Chalk" parentKey="word">
+          <Anchors>
+            <Anchor point="CENTER" relativeTo="$parent"/>
+          </Anchors>
+        </FontString>
+        <FontString inherits="Chalk" parentKey="endText">
+          <Anchors>
+            <Anchor point="CENTER" relativeTo="$parent" x="-10" y="-80"/>
+          </Anchors>
+        </FontString>
+        <FontString inherits="ChalkSmall" parentKey="previewPrefix" text="CURRENT SELECTION:">
+          <Anchors>
+            <Anchor point="BOTTOM" relativeTo="$parent" x="-50" y="32"/>
+          </Anchors>
+        </FontString>
+        <FontString inherits="Chalk" parentKey="preview">
+          <Anchors>
+            <Anchor point="BOTTOM" relativeTo="$parent" x="150" y="28"/>
+          </Anchors>
+        </FontString>
+      </Layer>
+    </Layers>
+    <Frames>
+      <!-- Create the buttons used by the game -->
+      <Button inherits="OptionsButtonTemplate">
+        <Size x="48" y="48"/>
+        <Anchors>
+          <Anchor point="TOPRIGHT">
+            <Offset x="-8" y="-8"/>
+          </Anchor> 
+        </Anchors>
+        <Scripts>
+          <OnClick>
+            minimize();
+          </OnClick>
+        </Scripts>
+        <Layers>
+          <Layer level="OVERLAY">
+            <FontString inherits="ChalkSmall" text="-"/>
+          </Layer>
+        </Layers>
+      </Button>
+      <Button inherits="OptionsButtonTemplate">
+        <Size x="48" y="48"/>
+        <Anchors>
+          <Anchor point="TOPRIGHT">
+            <Offset x="-56" y="-8"/>
+          </Anchor> 
+        </Anchors>
+        <Scripts>
+          <OnClick>
+            refresh();
+          </OnClick>
+        </Scripts>
+        <Layers>
+          <Layer level="OVERLAY">
+            <Texture name="RefreshTexture" file="Interface\Addons\hangman\textures\refresh" alphaMode="ADD">
+            </Texture>
+          </Layer>
+        </Layers>
+      </Button>
+      <Button name="Confirm" inherits="OptionsButtonTemplate">
+        <Size x="150" y="50"/>
+        <Anchors>
+          <Anchor point="BOTTOMRIGHT">
+            <Offset x="-16" y="16"/>
+          </Anchor> 
+        </Anchors>
+        <Scripts>
+          <OnLoad>
+            hookConfirm(self);
+          </OnLoad>
+          <OnClick>
+            confirm();
+          </OnClick>
+        </Scripts>
+        <Layers>
+          <Layer level="OVERLAY">
+            <FontString inherits="ChalkSmall" text="CONFIRM"/>
+          </Layer>
+        </Layers>
+      </Button>
+    </Frames>
+  </Frame>
+</Ui>

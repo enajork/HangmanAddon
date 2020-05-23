@@ -1,0 +1,14 @@
+## hangman.toc
+## Author: Eric Najork and David Najork
+## 
+## Class: CSC 372: Comparative Programming Languages
+## Assignment: Project #1, Part #3
+## Instructor: Lester McCann
+## TA: Tito Ferra and Josh Xiong
+## Due: December 9th, 2019
+## Description: this TOC file is used to enumerate
+## the dependencies of the hangman Addon.
+
+words.lua
+hangman.xml
+hangman.lua
